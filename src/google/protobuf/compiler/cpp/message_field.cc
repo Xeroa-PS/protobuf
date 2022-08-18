@@ -767,6 +767,7 @@ void RepeatedMessageFieldGenerator::GenerateAccessorDeclarations(
   format(
       "$deprecated_attr$const $type$& ${1$$name$$}$(int index) const;\n"
       "$deprecated_attr$$type$* ${1$add_$name$$}$();\n"
+      "$deprecated_attr$$classname$& ${1$add_$name$$}$(std::function<void($type$&)> f);\n"
       "$deprecated_attr$const ::$proto_ns$::RepeatedPtrField< $type$ >&\n"
       "    ${1$$name$$}$() const;\n",
       descriptor_);
@@ -823,6 +824,16 @@ void RepeatedMessageFieldGenerator::GenerateInlineAccessorDefinitions(
       "$annotate_add_mutable$"
       "  // @@protoc_insertion_point(field_add:$full_name$)\n"
       "  return _add;\n"
+      "}\n");
+
+  format(
+      "inline $classname$& $classname$::add_$name$"
+      "(std::function<void($type$&)> f) {\n"
+      "  $type$* _add = _internal_add_$name$();\n"
+      "  f(*_add);\n"
+      "$annotate_add_mutable$"
+      "  // @@protoc_insertion_point(field_add:$full_name$)\n"
+      "  return *this;\n"
       "}\n");
 
   format(
