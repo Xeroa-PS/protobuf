@@ -166,7 +166,7 @@ void StringFieldGenerator::GenerateAccessorDeclarations(
   format(
       "$deprecated_attr$const std::string& ${1$$name$$}$() const;\n"
       "template <typename ArgT0 = const std::string&, typename... ArgT>\n"
-      "$deprecated_attr$void ${1$set_$name$$}$(ArgT0&& arg0, ArgT... args);\n",
+      "$deprecated_attr$$classname$& ${1$set_$name$$}$$(ArgT0&& arg0, ArgT... args);\n",
       descriptor_);
   format(
       "$deprecated_attr$std::string* ${1$mutable_$name$$}$();\n"
@@ -214,19 +214,20 @@ void StringFieldGenerator::GenerateInlineAccessorDefinitions(
     format(
         "template <typename ArgT0, typename... ArgT>\n"
         "inline PROTOBUF_ALWAYS_INLINE\n"
-        "void $classname$::set_$name$(ArgT0&& arg0, ArgT... args) {\n"
+        "$classname$& $classname$::set_$name$(ArgT0&& arg0, ArgT... args) {\n"
         "$maybe_prepare_split_message$"
         " $set_hasbit$\n"
         " $field$.$setter$(static_cast<ArgT0 &&>(arg0),"
         " args..., GetArenaForAllocation());\n"
         "$annotate_set$"
+        "  return *this;\n"
         "  // @@protoc_insertion_point(field_set:$full_name$)\n"
         "}\n");
   } else {
     format(
         "template <typename ArgT0, typename... ArgT>\n"
         "inline PROTOBUF_ALWAYS_INLINE\n"
-        "void $classname$::set_$name$(ArgT0&& arg0, ArgT... args) {\n"
+        "$classname$& $classname$::set_$name$(ArgT0&& arg0, ArgT... args) {\n"
         "$maybe_prepare_split_message$"
         " $set_hasbit$\n"
         " $field$.$setter$(static_cast<ArgT0 &&>(arg0),"
@@ -234,6 +235,7 @@ void StringFieldGenerator::GenerateInlineAccessorDefinitions(
         "&$donating_states_word$, $mask_for_undonate$, this);\n"
         "$annotate_set$"
         "  // @@protoc_insertion_point(field_set:$full_name$)\n"
+        "  return *this;\n"
         "}\n"
         "inline bool $classname$::_internal_$name$_donated() const {\n"
         "  bool value = $inlined_string_donated$\n"
@@ -586,7 +588,7 @@ void StringOneofFieldGenerator::GenerateInlineAccessorDefinitions(
       "  return _internal_$name$();\n"
       "}\n"
       "template <typename ArgT0, typename... ArgT>\n"
-      "inline void $classname$::set_$name$(ArgT0&& arg0, ArgT... args) {\n"
+      "inline $classname$& $classname$::set_$name$(ArgT0&& arg0, ArgT... args) {\n"
       "  if (!_internal_has_$name$()) {\n"
       "    clear_$oneof_name$();\n"
       "    set_has_$name$();\n"
@@ -594,6 +596,7 @@ void StringOneofFieldGenerator::GenerateInlineAccessorDefinitions(
       "  }\n"
       "  $field$.$setter$("
       " static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());\n"
+      " return *this;\n"
       "$annotate_set$"
       "  // @@protoc_insertion_point(field_set:$full_name$)\n"
       "}\n"
@@ -706,34 +709,34 @@ void RepeatedStringFieldGenerator::GenerateAccessorDeclarations(
   format(
       "$deprecated_attr$const std::string& ${1$$name$$}$(int index) const;\n"
       "$deprecated_attr$std::string* ${1$mutable_$name$$}$(int index);\n"
-      "$deprecated_attr$void ${1$set_$name$$}$(int index, const "
+      "$deprecated_attr$$classname$& ${1$set_$name$$}$$(int index, const "
       "std::string& value);\n"
-      "$deprecated_attr$void ${1$set_$name$$}$(int index, std::string&& "
+      "$deprecated_attr$$classname$& ${1$set_$name$$}$$(int index, std::string&& "
       "value);\n"
-      "$deprecated_attr$void ${1$set_$name$$}$(int index, const "
+      "$deprecated_attr$$classname$& ${1$set_$name$$}$$(int index, const "
       "char* value);\n",
       descriptor_);
   if (!options_.opensource_runtime) {
     format(
-        "$deprecated_attr$void ${1$set_$name$$}$(int index, "
+        "$deprecated_attr$$classname$& ${1$set_$name$$}$$(int index, "
         "StringPiece value);\n",
         descriptor_);
   }
   format(
-      "$deprecated_attr$void ${1$set_$name$$}$("
+      "$deprecated_attr$$classname$& ${1$set_$name$$}$$("
       "int index, const $pointer_type$* value, size_t size);\n"
       "$deprecated_attr$std::string* ${1$add_$name$$}$();\n"
-      "$deprecated_attr$void ${1$add_$name$$}$(const std::string& value);\n"
-      "$deprecated_attr$void ${1$add_$name$$}$(std::string&& value);\n"
-      "$deprecated_attr$void ${1$add_$name$$}$(const char* value);\n",
+      "$deprecated_attr$$classname$& ${1$add_$name$$}$(const std::string& value);\n"
+      "$deprecated_attr$$classname$& ${1$add_$name$$}$(std::string&& value);\n"
+      "$deprecated_attr$$classname$& ${1$add_$name$$}$(const char* value);\n",
       descriptor_);
   if (!options_.opensource_runtime) {
     format(
-        "$deprecated_attr$void ${1$add_$name$$}$(StringPiece value);\n",
+        "$deprecated_attr$$classname$& ${1$add_$name$$}$(StringPiece value);\n",
         descriptor_);
   }
   format(
-      "$deprecated_attr$void ${1$add_$name$$}$(const $pointer_type$* "
+      "$deprecated_attr$$classname$& ${1$add_$name$$}$(const $pointer_type$* "
       "value, size_t size)"
       ";\n"
       "$deprecated_attr$const ::$proto_ns$::RepeatedPtrField<std::string>& "
@@ -790,74 +793,84 @@ void RepeatedStringFieldGenerator::GenerateInlineAccessorDefinitions(
       "  // @@protoc_insertion_point(field_mutable:$full_name$)\n"
       "  return $field$.Mutable(index);\n"
       "}\n"
-      "inline void $classname$::set_$name$(int index, const std::string& "
+      "inline $classname$& $classname$::set_$name$(int index, const std::string& "
       "value) "
       "{\n"
       "  $field$.Mutable(index)->assign(value);\n"
       "$annotate_set$"
+      "  return *this;"
       "  // @@protoc_insertion_point(field_set:$full_name$)\n"
       "}\n"
-      "inline void $classname$::set_$name$(int index, std::string&& value) {\n"
+      "inline $classname$& $classname$::set_$name$(int index, std::string&& value) {\n"
       "  $field$.Mutable(index)->assign(std::move(value));\n"
       "$annotate_set$"
+      "  return *this;"
       "  // @@protoc_insertion_point(field_set:$full_name$)\n"
       "}\n"
-      "inline void $classname$::set_$name$(int index, const char* value) {\n"
+      "inline $classname$& $classname$::set_$name$(int index, const char* value) {\n"
       "  $null_check$"
       "  $field$.Mutable(index)->assign(value);\n"
       "$annotate_set$"
+      "  return *this;"
       "  // @@protoc_insertion_point(field_set_char:$full_name$)\n"
       "}\n");
   if (!options_.opensource_runtime) {
     format(
-        "inline void "
+        "inline $classname$& "
         "$classname$::set_$name$(int index, StringPiece value) {\n"
         "  $field$.Mutable(index)->assign(value.data(), value.size());\n"
         "$annotate_set$"
+        "  return *this;"
         "  // @@protoc_insertion_point(field_set_string_piece:$full_name$)\n"
         "}\n");
   }
   format(
-      "inline void "
+      "inline $classname$& "
       "$classname$::set_$name$"
       "(int index, const $pointer_type$* value, size_t size) {\n"
       "  $field$.Mutable(index)->assign(\n"
       "    reinterpret_cast<const char*>(value), size);\n"
       "$annotate_set$"
+      "  return *this;"
       "  // @@protoc_insertion_point(field_set_pointer:$full_name$)\n"
       "}\n"
       "inline std::string* $classname$::_internal_add_$name$() {\n"
       "  return $field$.Add();\n"
       "}\n"
-      "inline void $classname$::add_$name$(const std::string& value) {\n"
+      "inline $classname$& $classname$::add_$name$(const std::string& value) {\n"
       "  $field$.Add()->assign(value);\n"
       "$annotate_add$"
+      "  return *this;"
       "  // @@protoc_insertion_point(field_add:$full_name$)\n"
       "}\n"
-      "inline void $classname$::add_$name$(std::string&& value) {\n"
+      "inline $classname$& $classname$::add_$name$(std::string&& value) {\n"
       "  $field$.Add(std::move(value));\n"
       "$annotate_add$"
+      "  return *this;"
       "  // @@protoc_insertion_point(field_add:$full_name$)\n"
       "}\n"
-      "inline void $classname$::add_$name$(const char* value) {\n"
+      "inline $classname$& $classname$::add_$name$(const char* value) {\n"
       "  $null_check$"
       "  $field$.Add()->assign(value);\n"
       "$annotate_add$"
+      "  return *this;"
       "  // @@protoc_insertion_point(field_add_char:$full_name$)\n"
       "}\n");
   if (!options_.opensource_runtime) {
     format(
-        "inline void $classname$::add_$name$(StringPiece value) {\n"
+        "inline $classname$& $classname$::add_$name$(StringPiece value) {\n"
         "  $field$.Add()->assign(value.data(), value.size());\n"
         "$annotate_add$"
+        "  return *this;"
         "  // @@protoc_insertion_point(field_add_string_piece:$full_name$)\n"
         "}\n");
   }
   format(
-      "inline void "
+      "inline $classname$& "
       "$classname$::add_$name$(const $pointer_type$* value, size_t size) {\n"
       "  $field$.Add()->assign(reinterpret_cast<const char*>(value), size);\n"
       "$annotate_add$"
+      "  return *this;"
       "  // @@protoc_insertion_point(field_add_pointer:$full_name$)\n"
       "}\n"
       "inline const ::$proto_ns$::RepeatedPtrField<std::string>&\n"
