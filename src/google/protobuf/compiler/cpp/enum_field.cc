@@ -83,7 +83,7 @@ void EnumFieldGenerator::GenerateAccessorDeclarations(
   Formatter format(printer, variables_);
   format(
       "$deprecated_attr$$type$ ${1$$name$$}$() const;\n"
-      "$deprecated_attr$void ${1$set_$name$$}$($type$ value);\n"
+      "$deprecated_attr$$classname$& ${1$set_$name$$}$($type$ value);\n"
       "private:\n"
       "$type$ ${1$_internal_$name$$}$() const;\n"
       "void ${1$_internal_set_$name$$}$($type$ value);\n"
@@ -111,10 +111,11 @@ void EnumFieldGenerator::GenerateInlineAccessorDefinitions(
       "  $set_hasbit$\n"
       "  $field$ = value;\n"
       "}\n"
-      "inline void $classname$::set_$name$($type$ value) {\n"
+      "inline $classname$& $classname$::set_$name$($type$ value) {\n"
       "$maybe_prepare_split_message$"
       "  _internal_set_$name$(value);\n"
       "$annotate_set$"
+      "  return *this;\n"
       "  // @@protoc_insertion_point(field_set:$full_name$)\n"
       "}\n");
 }
@@ -214,9 +215,10 @@ void EnumOneofFieldGenerator::GenerateInlineAccessorDefinitions(
       "  }\n"
       "  $field$ = value;\n"
       "}\n"
-      "inline void $classname$::set_$name$($type$ value) {\n"
+      "inline $classname$& $classname$::set_$name$($type$ value) {\n"
       "  _internal_set_$name$(value);\n"
       "$annotate_set$"
+      "  return *this;\n"
       "  // @@protoc_insertion_point(field_set:$full_name$)\n"
       "}\n");
 }
@@ -269,8 +271,8 @@ void RepeatedEnumFieldGenerator::GenerateAccessorDeclarations(
       "${1$_internal_mutable_$name$$}$();\n"
       "public:\n"
       "$deprecated_attr$$type$ ${1$$name$$}$(int index) const;\n"
-      "$deprecated_attr$void ${1$set_$name$$}$(int index, $type$ value);\n"
-      "$deprecated_attr$void ${1$add_$name$$}$($type$ value);\n"
+      "$deprecated_attr$$classname$& ${1$set_$name$$}$(int index, $type$ value);\n "
+      "$deprecated_attr$$classname$& ${1$add_$name$$}$($type$ value);\n"
       "$deprecated_attr$const ::$proto_ns$::RepeatedField<int>& "
       "${1$$name$$}$() const;\n"
       "$deprecated_attr$::$proto_ns$::RepeatedField<int>* "
@@ -290,13 +292,14 @@ void RepeatedEnumFieldGenerator::GenerateInlineAccessorDefinitions(
       "  // @@protoc_insertion_point(field_get:$full_name$)\n"
       "  return _internal_$name$(index);\n"
       "}\n"
-      "inline void $classname$::set_$name$(int index, $type$ value) {\n");
+      "inline $classname$& $classname$::set_$name$(int index, $type$ value) {\n");
   if (!internal::cpp::HasPreservingUnknownEnumSemantics(descriptor_)) {
     format("  assert($type$_IsValid(value));\n");
   }
   format(
       "  $field$.Set(index, value);\n"
       "$annotate_set$"
+      "  return *this;\n"
       "  // @@protoc_insertion_point(field_set:$full_name$)\n"
       "}\n"
       "inline void $classname$::_internal_add_$name$($type$ value) {\n");
@@ -306,9 +309,10 @@ void RepeatedEnumFieldGenerator::GenerateInlineAccessorDefinitions(
   format(
       "  $field$.Add(value);\n"
       "}\n"
-      "inline void $classname$::add_$name$($type$ value) {\n"
+      "inline $classname$& $classname$::add_$name$($type$ value) {\n"
       "  _internal_add_$name$(value);\n"
       "$annotate_add$"
+      "  return *this;\n"
       "  // @@protoc_insertion_point(field_add:$full_name$)\n"
       "}\n"
       "inline const ::$proto_ns$::RepeatedField<int>&\n"
