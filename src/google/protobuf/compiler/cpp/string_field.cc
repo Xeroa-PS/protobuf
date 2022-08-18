@@ -166,7 +166,7 @@ void StringFieldGenerator::GenerateAccessorDeclarations(
   format(
       "$deprecated_attr$const std::string& ${1$$name$$}$() const;\n"
       "template <typename ArgT0 = const std::string&, typename... ArgT>\n"
-      "$deprecated_attr$$classname$& ${1$set_$name$$}$$(ArgT0&& arg0, ArgT... args);\n",
+      "$deprecated_attr$$classname$& ${1$set_$name$$}$(ArgT0&& arg0, ArgT... args);\n",
       descriptor_);
   format(
       "$deprecated_attr$std::string* ${1$mutable_$name$$}$();\n"
@@ -709,21 +709,21 @@ void RepeatedStringFieldGenerator::GenerateAccessorDeclarations(
   format(
       "$deprecated_attr$const std::string& ${1$$name$$}$(int index) const;\n"
       "$deprecated_attr$std::string* ${1$mutable_$name$$}$(int index);\n"
-      "$deprecated_attr$$classname$& ${1$set_$name$$}$$(int index, const "
+      "$deprecated_attr$$classname$& ${1$set_$name$$}$(int index, const "
       "std::string& value);\n"
-      "$deprecated_attr$$classname$& ${1$set_$name$$}$$(int index, std::string&& "
+      "$deprecated_attr$$classname$& ${1$set_$name$$}$(int index, std::string&& "
       "value);\n"
-      "$deprecated_attr$$classname$& ${1$set_$name$$}$$(int index, const "
+      "$deprecated_attr$$classname$& ${1$set_$name$$}$(int index, const "
       "char* value);\n",
       descriptor_);
   if (!options_.opensource_runtime) {
     format(
-        "$deprecated_attr$$classname$& ${1$set_$name$$}$$(int index, "
+        "$deprecated_attr$$classname$& ${1$set_$name$$}$(int index, "
         "StringPiece value);\n",
         descriptor_);
   }
   format(
-      "$deprecated_attr$$classname$& ${1$set_$name$$}$$("
+      "$deprecated_attr$$classname$& ${1$set_$name$$}$("
       "int index, const $pointer_type$* value, size_t size);\n"
       "$deprecated_attr$std::string* ${1$add_$name$$}$();\n"
       "$deprecated_attr$$classname$& ${1$add_$name$$}$(const std::string& value);\n"
